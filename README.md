@@ -1,9 +1,10 @@
-TODO
+Go Links Backend REST API
+===============
 
-Getting Started:
-	Go Links currently uses redis as its data store.  Check out https://redis.io/ for installation
-	
-1. Install and start up redis
-2. Run src/main/java/com/go/Application.java using -Dspring.profiles.active=local
+[![Build Status](https://travis-ci.org/squarshednanners/go-links-rest.svg?branch=master)](https://travis-ci.org/squarshednanners/go-links-rest)
+
+#### QuickStart:
+	1. Requirmenet: Redis: Installation instructions: https://redis.io/
+	2. Run src/main/java/com/go/Application.java using -Dspring.profiles.active=local
 
 Check out the frontend code at: https://github.com/squarshednanners/go-links-ui

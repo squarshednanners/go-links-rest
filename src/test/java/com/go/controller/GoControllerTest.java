@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.go.bac.IGoBAC;
 import com.go.controller.GoController;
@@ -338,6 +339,7 @@ public class GoControllerTest {
 
 	@Test
 	public void testGoWhenNotExistsRedirectToCreatePage() {
+		ReflectionTestUtils.setField(goController, "linkNotExistsUrl", "http://localhost:8081/#/createLink?name=test&nogo=true");
 		when(goBAC.fetchLink("test")).thenThrow(new GoLinkException("go.link.does.not.exist"));
 		HttpServletResponse httpResponse = Mockito.mock(HttpServletResponse.class);
 		Response<GoLink> response = goController.go("test", httpResponse);
