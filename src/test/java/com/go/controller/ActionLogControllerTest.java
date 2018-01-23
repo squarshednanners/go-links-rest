@@ -21,19 +21,19 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.MessageSourceAccessor;
 
-import com.go.bac.ILogBAC;
-import com.go.controller.LogController;
+import com.go.bac.IActionLogBAC;
+import com.go.controller.ActionLogController;
 import com.go.exception.GoLinkException;
 import com.go.model.Response;
-import com.go.model.UsageLog;
+import com.go.model.ActionLog;
 
-public class LogControllerTest {
+public class ActionLogControllerTest {
 
 	@InjectMocks
-	private LogController logController;
+	private ActionLogController logController;
 
 	@Mock
-	private ILogBAC logBAC;
+	private IActionLogBAC logBAC;
 
 	@Mock
 	private MessageSourceAccessor messageSourceAccessor;
@@ -51,9 +51,9 @@ public class LogControllerTest {
 
 	@Test
 	public void testGetAllLogs() {
-		List<UsageLog> logList = new ArrayList<>();
+		List<ActionLog> logList = new ArrayList<>();
 		when(logBAC.fetchAllLogs()).thenReturn(logList);
-		Response<List<UsageLog>> logResponse = logController.fetchAllLogs();
+		Response<List<ActionLog>> logResponse = logController.fetchAllLogs();
 		assertEquals(logList, logResponse.getResults());
 		assertTrue(logResponse.getSuccessful());
 		assertTrue(logResponse.getMessageList().isEmpty());
@@ -64,7 +64,7 @@ public class LogControllerTest {
 	public void testGetAllLogsOnException() {
 		when(logBAC.fetchAllLogs()).thenThrow(new RuntimeException("Bad things happened"));
 		when(messageSourceAccessor.getMessage(eq("log.fetch.error"), any(Object[].class))).thenReturn("parsed message");
-		Response<List<UsageLog>> logResponse = logController.fetchAllLogs();
+		Response<List<ActionLog>> logResponse = logController.fetchAllLogs();
 		assertNull(logResponse.getResults());
 		assertFalse(logResponse.getSuccessful());
 		assertEquals(2, logResponse.getMessageList().size());
@@ -79,7 +79,7 @@ public class LogControllerTest {
 		when(logBAC.fetchAllLogs()).thenThrow(new GoLinkException("error.code", "arg1"));
 		when(messageSourceAccessor.getMessage(eq("log.fetch.error"), any(Object[].class))).thenReturn("parsed message");
 		when(messageSourceAccessor.getMessage(eq("error.code"), any(Object[].class))).thenReturn("parsed message 2");
-		Response<List<UsageLog>> logResponse = logController.fetchAllLogs();
+		Response<List<ActionLog>> logResponse = logController.fetchAllLogs();
 		assertNull(logResponse.getResults());
 		assertFalse(logResponse.getSuccessful());
 		assertEquals(2, logResponse.getMessageList().size());
@@ -95,9 +95,9 @@ public class LogControllerTest {
 
 	@Test
 	public void testGetUserLogs() {
-		List<UsageLog> logList = new ArrayList<>();
+		List<ActionLog> logList = new ArrayList<>();
 		when(logBAC.fetchLogsForUser("test@test.com")).thenReturn(logList);
-		Response<List<UsageLog>> logResponse = logController.fetchUserLogs("test@test.com");
+		Response<List<ActionLog>> logResponse = logController.fetchUserLogs("test@test.com");
 		assertEquals(logList, logResponse.getResults());
 		assertTrue(logResponse.getSuccessful());
 		assertTrue(logResponse.getMessageList().isEmpty());
@@ -108,7 +108,7 @@ public class LogControllerTest {
 	public void testGetUserLogsOnException() {
 		when(logBAC.fetchLogsForUser("test@test.com")).thenThrow(new RuntimeException("Bad things happened"));
 		when(messageSourceAccessor.getMessage(eq("log.fetch.error"), any(Object[].class))).thenReturn("parsed message");
-		Response<List<UsageLog>> logResponse = logController.fetchUserLogs("test@test.com");
+		Response<List<ActionLog>> logResponse = logController.fetchUserLogs("test@test.com");
 		assertNull(logResponse.getResults());
 		assertFalse(logResponse.getSuccessful());
 		assertEquals(2, logResponse.getMessageList().size());
@@ -123,7 +123,7 @@ public class LogControllerTest {
 		when(logBAC.fetchLogsForUser("test@test.com")).thenThrow(new GoLinkException("error.code", "arg1"));
 		when(messageSourceAccessor.getMessage(eq("log.fetch.error"), any(Object[].class))).thenReturn("parsed message");
 		when(messageSourceAccessor.getMessage(eq("error.code"), any(Object[].class))).thenReturn("parsed message 2");
-		Response<List<UsageLog>> logResponse = logController.fetchUserLogs("test@test.com");
+		Response<List<ActionLog>> logResponse = logController.fetchUserLogs("test@test.com");
 		assertNull(logResponse.getResults());
 		assertFalse(logResponse.getSuccessful());
 		assertEquals(2, logResponse.getMessageList().size());

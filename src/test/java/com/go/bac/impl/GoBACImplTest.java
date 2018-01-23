@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.go.bac.ILogBAC;
+import com.go.bac.IActionLogBAC;
 import com.go.bac.impl.GoBACImpl;
 import com.go.bar.IGoLinkBAR;
 import com.go.exception.GoLinkException;
@@ -35,7 +35,7 @@ public class GoBACImplTest {
 	private IGoLinkBAR goBAR;
 
 	@Mock
-	private ILogBAC logBAC;
+	private IActionLogBAC logBAC;
 
 	@Mock
 	private GoLinkValidator goLinkValidator;

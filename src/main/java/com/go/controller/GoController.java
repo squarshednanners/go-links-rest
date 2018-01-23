@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.go.bac.IGoBAC;
+import com.go.bac.IUsageLogBAC;
 import com.go.exception.GoLinkException;
 import com.go.model.GoLink;
 import com.go.model.Message;
@@ -30,9 +31,12 @@ public class GoController extends BaseController {
 
 	@Autowired
 	private IGoBAC goBAC;
-	
+
+	@Autowired
+	private IUsageLogBAC usageLogBAC;
+
 	@Value("${link.does.not.exist.url}")
-    private String linkNotExistsUrl;
+	private String linkNotExistsUrl;
 
 	@GetMapping("/all")
 	@PreAuthorize("hasRole('USER')")
@@ -93,6 +97,7 @@ public class GoController extends BaseController {
 		try {
 			GoLink link = goBAC.fetchLink(name);
 			redirect(link, param, httpServletResponse);
+			logUsage(link.getName());
 			return null;
 		} catch (Exception e) {
 			Response<GoLink> response = new Response<GoLink>();
@@ -107,12 +112,12 @@ public class GoController extends BaseController {
 		try {
 			GoLink link = goBAC.fetchLink(name);
 			redirect(link, null, httpServletResponse);
+			logUsage(link.getName());
 			return null;
 		} catch (Exception e) {
 			if (e instanceof GoLinkException
 					&& "go.link.does.not.exist".equals(((GoLinkException) e).getErrorMessage().getCode())) {
-				redirect(linkNotExistsUrl.replace("{linkName}", name),
-						httpServletResponse);
+				redirect(linkNotExistsUrl.replace("{linkName}", name), httpServletResponse);
 				return null;
 			} else {
 				Response<GoLink> response = new Response<GoLink>();
@@ -129,6 +134,10 @@ public class GoController extends BaseController {
 	private void redirect(String url, HttpServletResponse httpServletResponse) {
 		httpServletResponse.setStatus(302);
 		httpServletResponse.setHeader("Location", url);
+	}
+
+	private void logUsage(String linkName) {
+		usageLogBAC.logUsage(linkName);
 	}
 
 }

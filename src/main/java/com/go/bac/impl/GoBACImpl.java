@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.go.bac.IGoBAC;
-import com.go.bac.ILogBAC;
+import com.go.bac.IActionLogBAC;
 import com.go.bar.IGoLinkBAR;
 import com.go.exception.GoLinkException;
 import com.go.model.GoLink;
@@ -20,7 +20,7 @@ public class GoBACImpl implements IGoBAC {
 	private IGoLinkBAR goBAR;
 
 	@Autowired
-	private ILogBAC usageBAC;
+	private IActionLogBAC actionLogBAC;
 
 	@Autowired
 	private GoLinkValidator goLinkValidator;
@@ -50,7 +50,7 @@ public class GoBACImpl implements IGoBAC {
 			throw new GoLinkException("go.link.already.exists", existingLink.getName());
 		}
 		goBAR.createLink(link);
-		usageBAC.logLinkCreation(requestingUser, link.getName());
+		actionLogBAC.logLinkCreation(requestingUser, link.getName());
 		return link;
 	}
 
@@ -58,7 +58,7 @@ public class GoBACImpl implements IGoBAC {
 	public GoLink deleteLink(String linkName, String requestingUser) {
 		GoLink existingLink = fetchLink(linkName);
 		goBAR.deleteLink(existingLink.getName());
-		usageBAC.logLinkDeletion(requestingUser, existingLink.getName());
+		actionLogBAC.logLinkDeletion(requestingUser, existingLink.getName());
 		return existingLink;
 	}
 

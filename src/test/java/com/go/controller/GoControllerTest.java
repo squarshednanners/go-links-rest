@@ -28,6 +28,7 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.go.bac.IGoBAC;
+import com.go.bac.IUsageLogBAC;
 import com.go.controller.GoController;
 import com.go.exception.GoLinkException;
 import com.go.model.GoLink;
@@ -40,6 +41,9 @@ public class GoControllerTest {
 
 	@Mock
 	private IGoBAC goBAC;
+	
+	@Mock
+	private IUsageLogBAC usageLogBAC;
 
 	@Mock
 	private MessageSourceAccessor messageSourceAccessor;
@@ -56,6 +60,7 @@ public class GoControllerTest {
 	@After
 	public void verifyMocks() {
 		verifyNoMoreInteractions(goBAC);
+		verifyNoMoreInteractions(usageLogBAC);
 		verifyNoMoreInteractions(messageSourceAccessor);
 		verifyNoMoreInteractions(principal);
 	}
@@ -268,6 +273,7 @@ public class GoControllerTest {
 		verify(goBAC).fetchLink("test");
 		verify(httpResponse).setStatus(302);
 		verify(httpResponse).setHeader("Location", "http://test.com");
+		verify(usageLogBAC).logUsage("test");
 		verifyNoMoreInteractions(httpResponse);
 	}
 
@@ -297,6 +303,7 @@ public class GoControllerTest {
 		verify(goBAC).fetchLink("test");
 		verify(httpResponse).setStatus(302);
 		verify(httpResponse).setHeader("Location", "http://test.com");
+		verify(usageLogBAC).logUsage("test");
 		verifyNoMoreInteractions(httpResponse);
 	}
 

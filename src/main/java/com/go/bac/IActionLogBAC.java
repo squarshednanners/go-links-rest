@@ -2,15 +2,15 @@ package com.go.bac;
 
 import java.util.List;
 
-import com.go.model.UsageLog;
+import com.go.model.ActionLog;
 
-public interface ILogBAC {
+public interface IActionLogBAC {
 
 	void logLinkCreation(String username, String linkName);
 
 	void logLinkDeletion(String username, String linkName);
 
-	List<UsageLog> fetchAllLogs();
+	List<ActionLog> fetchAllLogs();
 
-	List<UsageLog> fetchLogsForUser(String username);
+	List<ActionLog> fetchLogsForUser(String username);
 }

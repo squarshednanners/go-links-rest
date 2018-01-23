@@ -8,8 +8,9 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import com.go.model.ActionLog;
 import com.go.model.GoLink;
-import com.go.model.UsageLog;
+import com.go.model.Log;
 import com.go.model.User;
 
 import redis.clients.jedis.JedisPoolConfig;
@@ -43,9 +44,16 @@ public class BARConfig {
 	}
 
 	@Bean
-	public RedisTemplate<String, UsageLog> usageLogRedisTemplate() {
-		final RedisTemplate<String, UsageLog> template = new RedisTemplate<String, UsageLog>();
-		overrideDefaultSerializers(template, new Jackson2JsonRedisSerializer<UsageLog>(UsageLog.class));
+	public RedisTemplate<String, ActionLog> actionLogRedisTemplate() {
+		final RedisTemplate<String, ActionLog> template = new RedisTemplate<String, ActionLog>();
+		overrideDefaultSerializers(template, new Jackson2JsonRedisSerializer<ActionLog>(ActionLog.class));
+		return template;
+	}
+
+	@Bean
+	public RedisTemplate<String, Log> usageLogRedisTemplate() {
+		final RedisTemplate<String, Log> template = new RedisTemplate<String, Log>();
+		overrideDefaultSerializers(template, new Jackson2JsonRedisSerializer<Log>(Log.class));
 		return template;
 	}
 

@@ -9,24 +9,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.go.bac.ILogBAC;
+import com.go.bac.IActionLogBAC;
 import com.go.model.Message;
 import com.go.model.Response;
-import com.go.model.UsageLog;
+import com.go.model.ActionLog;
 
 @RestController
-@RequestMapping("/api/log")
-public class LogController extends BaseController {
+@RequestMapping("/api/log/action")
+public class ActionLogController extends BaseController {
 
 	@Autowired
-	private ILogBAC usageLogBAC;
+	private IActionLogBAC actionLogBAC;
 
 	@GetMapping("/all")
 	@PreAuthorize("hasRole('ADMIN')")
-	public Response<List<UsageLog>> fetchAllLogs() {
-		Response<List<UsageLog>> response = new Response<List<UsageLog>>();
+	public Response<List<ActionLog>> fetchAllLogs() {
+		Response<List<ActionLog>> response = new Response<List<ActionLog>>();
 		try {
-			response.setResults(usageLogBAC.fetchAllLogs());
+			response.setResults(actionLogBAC.fetchAllLogs());
 			formatSuccessResponse(response);
 		} catch (Exception e) {
 			formatErrorResponse(response, e, new Message("log.fetch.error"));
@@ -36,10 +36,10 @@ public class LogController extends BaseController {
 
 	@GetMapping("/user/{username}")
 	@PreAuthorize("hasRole('ADMIN')")
-	public Response<List<UsageLog>> fetchUserLogs(@PathVariable("username") String username) {
-		Response<List<UsageLog>> response = new Response<List<UsageLog>>();
+	public Response<List<ActionLog>> fetchUserLogs(@PathVariable("username") String username) {
+		Response<List<ActionLog>> response = new Response<List<ActionLog>>();
 		try {
-			response.setResults(usageLogBAC.fetchLogsForUser(username));
+			response.setResults(actionLogBAC.fetchLogsForUser(username));
 			formatSuccessResponse(response);
 		} catch (Exception e) {
 			formatErrorResponse(response, e, new Message("log.fetch.error"));
