@@ -33,4 +33,9 @@ public class Log implements Serializable {
 		this.time = time;
 	}
 
+	@Override
+	public String toString() {
+		return "Log [linkName=" + linkName + ", time=" + time + "]";
+	}
+
 }
