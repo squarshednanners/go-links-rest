@@ -3,7 +3,7 @@ package com.go.model;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class ActionLog extends Log implements Serializable {
+public class ActionLog extends UsageLog implements Serializable {
 	private String username;
 	private ActionTypeEnum action;
 

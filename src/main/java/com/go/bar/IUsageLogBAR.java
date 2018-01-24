@@ -2,14 +2,17 @@ package com.go.bar;
 
 import java.util.List;
 
-import com.go.model.Log;
+import com.go.model.UsageLog;
+import com.go.model.SortDirection;
 
 public interface IUsageLogBAR {
-	void log(Log log);
+	void log(UsageLog log);
 
-	List<Log> getOldestUsageLogs(Integer pageNumber, Integer pageSize);
+	List<UsageLog> fetchPagedLogsSortedAscending(Integer pageNumber, Integer pageSize);
 
-	List<Log> getNewestUsageLogs(Integer pageNumber, Integer pageSize);
+	List<UsageLog> fetchPagedLogsSortedDescending(Integer pageNumber, Integer pageSize);
 
-	void deleteLog(Log log);
+	List<UsageLog> fetchUsageLogsByInterval(Long startTimeInMillis, Long endTimeInMillis, SortDirection sortDirection);
+
+	void deleteLog(UsageLog log);
 }

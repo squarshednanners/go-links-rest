@@ -18,11 +18,11 @@ import org.mockito.MockitoAnnotations;
 
 import com.go.bar.IUsageLogBAR;
 import com.go.model.ActionLog;
-import com.go.model.Log;
+import com.go.model.UsageLog;
+import com.go.model.SortDirection;
+import com.go.util.TimeUtil;
 
 public class UsageLogBACImplTest {
-
-	private static final long MILLIS_IN_DAY = 86400001;
 
 	@InjectMocks
 	private UsageLogBACImpl usageLogBAC;
@@ -44,7 +44,7 @@ public class UsageLogBACImplTest {
 	public void testCreateLog() {
 		long currentTimeInMillis = System.currentTimeMillis();
 		usageLogBAC.logUsage("test");
-		ArgumentCaptor<Log> actionCaptor = ArgumentCaptor.forClass(ActionLog.class);
+		ArgumentCaptor<UsageLog> actionCaptor = ArgumentCaptor.forClass(ActionLog.class);
 		Mockito.verify(usageLogBAR).log(actionCaptor.capture());
 		assertEquals("test", actionCaptor.getValue().getLinkName());
 		assertTrue(actionCaptor.getValue().getTime() >= currentTimeInMillis);
@@ -52,37 +52,27 @@ public class UsageLogBACImplTest {
 
 	@Test
 	public void testDeleteUsageLogsWhenNothingToDelete() {
-		Mockito.when(usageLogBAR.getOldestUsageLogs(1, 100)).thenReturn(Lists.emptyList());
+		Mockito.when(usageLogBAR.fetchUsageLogsByInterval(0l, midnightYesterday(), SortDirection.ASC))
+				.thenReturn(Lists.emptyList());
 		usageLogBAC.deleteUsageLogs(1);
-		Mockito.verify(usageLogBAR).getOldestUsageLogs(1, 100);
+		Mockito.verify(usageLogBAR).fetchUsageLogsByInterval(0l, midnightYesterday(), SortDirection.ASC);
 	}
 
 	@Test
 	public void testDeleteOneUsageLog() {
-		Log log1 = createLog(true);
-		Mockito.when(usageLogBAR.getOldestUsageLogs(1, 100)).thenReturn(Arrays.asList(log1, createLog(false)));
+		UsageLog log1 = new UsageLog();
+		UsageLog log2 = new UsageLog();
+		Mockito.when(usageLogBAR.fetchUsageLogsByInterval(0l, midnightYesterday(), SortDirection.ASC))
+				.thenReturn(Arrays.asList(log1, log2));
 		usageLogBAC.deleteUsageLogs(1);
-		Mockito.verify(usageLogBAR).getOldestUsageLogs(1, 100);
+		Mockito.verify(usageLogBAR).fetchUsageLogsByInterval(0l, midnightYesterday(), SortDirection.ASC);
 		Mockito.verify(usageLogBAR).deleteLog(log1);
+		Mockito.verify(usageLogBAR).deleteLog(log2);
+
 	}
 
-	@Test
-	public void testDeleteMultipleSetsOfUsageLogs() {
-		Mockito.when(usageLogBAR.getOldestUsageLogs(1, 100)).thenReturn(Arrays.asList(createLog(true), createLog(true)))
-				.thenReturn(Arrays.asList(createLog(true), createLog(false)));
-		usageLogBAC.deleteUsageLogs(1);
-		Mockito.verify(usageLogBAR, Mockito.times(2)).getOldestUsageLogs(1, 100);
-		Mockito.verify(usageLogBAR, Mockito.times(3)).deleteLog(Mockito.any(Log.class));
-	}
-
-	private Log createLog(boolean subtractDay) {
-		Log log = new Log("test");
-		if (subtractDay) {
-			log.setTime(System.currentTimeMillis() - MILLIS_IN_DAY);
-		} else {
-			log.setTime(System.currentTimeMillis() - MILLIS_IN_DAY + 2);
-		}
-		return log;
+	private long midnightYesterday() {
+		return TimeUtil.topOfDay().minusDays(1).toInstant().toEpochMilli();
 	}
 
 }

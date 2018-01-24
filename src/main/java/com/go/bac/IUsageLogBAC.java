@@ -5,4 +5,5 @@ public interface IUsageLogBAC {
 	void logUsage(String linkName);
 
 	void deleteUsageLogs(Integer daysToKeep);
+
 }

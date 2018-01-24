@@ -3,16 +3,16 @@ package com.go.model;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class Log implements Serializable {
+public class UsageLog implements Serializable {
 
 	private String linkName;
 	private Long time;
 
-	public Log() {
+	public UsageLog() {
 
 	}
 
-	public Log(String linkName) {
+	public UsageLog(String linkName) {
 		setLinkName(linkName);
 		setTime(System.currentTimeMillis());
 	}

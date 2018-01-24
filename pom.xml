@@ -101,6 +101,30 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>1.3.0</version>
+        <configuration>
+          <coverageThreshold>90</coverageThreshold>
+          <mutationThreshold>85</mutationThreshold>
+          <excludedClasses>
+            <param>com.go.Application</param>
+            <param>com.go.config*</param>
+            <param>com.go.security.config*</param>
+          </excludedClasses>
+          <outputFormats>
+            <outputFormat>XML</outputFormat>
+            <outputFormat>HTML</outputFormat>
+          </outputFormats>
+          <avoidCallsTo>
+            <avoidCallsTo>java.util.logging</avoidCallsTo>
+            <avoidCallsTo>org.apache.log4j</avoidCallsTo>
+            <avoidCallsTo>org.slf4j</avoidCallsTo>
+            <avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
+          </avoidCallsTo>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.6.1</version><!--$NO-MVN-MAN-VER$ -->
         <configuration>

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -113,7 +114,7 @@ public class GoControllerTest {
 
 	@Test
 	public void testSearchLinks() {
-		List<GoLink> linkList = new ArrayList<>();
+		List<GoLink> linkList = Arrays.asList(createLink());
 		when(goBAC.searchLinks("stuff")).thenReturn(linkList);
 		Response<List<GoLink>> response = goController.searchLinks("stuff");
 		assertEquals(linkList, response.getResults());

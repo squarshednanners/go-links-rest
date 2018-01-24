@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
@@ -25,7 +25,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.MessageSourceAccessor;
 
 import com.go.bac.IUserBAC;
-import com.go.controller.UserController;
 import com.go.exception.GoLinkException;
 import com.go.model.Response;
 import com.go.model.RoleEnum;
@@ -55,7 +54,7 @@ public class UserControllerTest {
 
 	@Test
 	public void testGetAllUsers() {
-		List<User> userList = new ArrayList<>();
+		List<User> userList = Arrays.asList(createUser());
 		when(userBAC.fetchAllUsers()).thenReturn(userList);
 		Response<List<User>> response = userController.fetchAllUsers();
 		assertEquals(userList, response.getResults());

@@ -4,28 +4,28 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import static org.mockito.ArgumentMatchers.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.MessageSourceAccessor;
 
 import com.go.bac.IActionLogBAC;
-import com.go.controller.ActionLogController;
 import com.go.exception.GoLinkException;
-import com.go.model.Response;
 import com.go.model.ActionLog;
+import com.go.model.Response;
 
 public class ActionLogControllerTest {
 
@@ -51,7 +51,7 @@ public class ActionLogControllerTest {
 
 	@Test
 	public void testGetAllLogs() {
-		List<ActionLog> logList = new ArrayList<>();
+		List<ActionLog> logList = Arrays.asList(new ActionLog());
 		when(logBAC.fetchAllLogs()).thenReturn(logList);
 		Response<List<ActionLog>> logResponse = logController.fetchAllLogs();
 		assertEquals(logList, logResponse.getResults());
@@ -95,7 +95,7 @@ public class ActionLogControllerTest {
 
 	@Test
 	public void testGetUserLogs() {
-		List<ActionLog> logList = new ArrayList<>();
+		List<ActionLog> logList = Arrays.asList(new ActionLog());
 		when(logBAC.fetchLogsForUser("test@test.com")).thenReturn(logList);
 		Response<List<ActionLog>> logResponse = logController.fetchUserLogs("test@test.com");
 		assertEquals(logList, logResponse.getResults());
