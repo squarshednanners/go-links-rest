@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.go.bac.IActionLogBAC;
 import com.go.bar.IActionLogBAR;
 import com.go.model.ActionTypeEnum;
+import com.go.model.SortDirection;
 import com.go.model.ActionLog;
 
 @Component
@@ -28,14 +29,14 @@ public class ActionLogBACImpl implements IActionLogBAC {
 	}
 
 	@Override
-	public List<ActionLog> fetchAllLogs() {
-		return actionLogBAR.getAllLogs();
+	public List<ActionLog> fetchAllLogs(SortDirection sortDirection) {
+		return actionLogBAR.getAllLogs(sortDirection);
 	}
 
 	@Override
 	public List<ActionLog> fetchLogsForUser(String username) {
 		List<ActionLog> userLogs = new ArrayList<ActionLog>();
-		for (ActionLog log : actionLogBAR.getAllLogs()) {
+		for (ActionLog log : actionLogBAR.getAllLogs(null)) {
 			if (username.equalsIgnoreCase(log.getUsername())) {
 				userLogs.add(log);
 			}

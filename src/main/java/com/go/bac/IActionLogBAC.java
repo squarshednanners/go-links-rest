@@ -3,6 +3,7 @@ package com.go.bac;
 import java.util.List;
 
 import com.go.model.ActionLog;
+import com.go.model.SortDirection;
 
 public interface IActionLogBAC {
 
@@ -10,7 +11,7 @@ public interface IActionLogBAC {
 
 	void logLinkDeletion(String username, String linkName);
 
-	List<ActionLog> fetchAllLogs();
+	List<ActionLog> fetchAllLogs(SortDirection sortDirection);
 
 	List<ActionLog> fetchLogsForUser(String username);
 }

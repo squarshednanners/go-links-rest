@@ -26,6 +26,7 @@ import com.go.bac.IActionLogBAC;
 import com.go.exception.GoLinkException;
 import com.go.model.ActionLog;
 import com.go.model.Response;
+import com.go.model.SortDirection;
 
 public class ActionLogControllerTest {
 
@@ -52,40 +53,40 @@ public class ActionLogControllerTest {
 	@Test
 	public void testGetAllLogs() {
 		List<ActionLog> logList = Arrays.asList(new ActionLog());
-		when(logBAC.fetchAllLogs()).thenReturn(logList);
-		Response<List<ActionLog>> logResponse = logController.fetchAllLogs();
+		when(logBAC.fetchAllLogs(SortDirection.DESC)).thenReturn(logList);
+		Response<List<ActionLog>> logResponse = logController.fetchAllLogs(SortDirection.DESC);
 		assertEquals(logList, logResponse.getResults());
 		assertTrue(logResponse.getSuccessful());
 		assertTrue(logResponse.getMessageList().isEmpty());
-		verify(logBAC).fetchAllLogs();
+		verify(logBAC).fetchAllLogs(SortDirection.DESC);
 	}
 
 	@Test
 	public void testGetAllLogsOnException() {
-		when(logBAC.fetchAllLogs()).thenThrow(new RuntimeException("Bad things happened"));
+		when(logBAC.fetchAllLogs(null)).thenThrow(new RuntimeException("Bad things happened"));
 		when(messageSourceAccessor.getMessage(eq("log.fetch.error"), any(Object[].class))).thenReturn("parsed message");
-		Response<List<ActionLog>> logResponse = logController.fetchAllLogs();
+		Response<List<ActionLog>> logResponse = logController.fetchAllLogs(null);
 		assertNull(logResponse.getResults());
 		assertFalse(logResponse.getSuccessful());
 		assertEquals(2, logResponse.getMessageList().size());
 		assertEquals("parsed message", logResponse.getMessageList().get(0));
 		assertEquals("Bad things happened", logResponse.getMessageList().get(1));
-		verify(logBAC).fetchAllLogs();
+		verify(logBAC).fetchAllLogs(null);
 		verify(messageSourceAccessor).getMessage(eq("log.fetch.error"), any(Object[].class));
 	}
 
 	@Test
 	public void testGetAllLogsOnGoLinkException() {
-		when(logBAC.fetchAllLogs()).thenThrow(new GoLinkException("error.code", "arg1"));
+		when(logBAC.fetchAllLogs(null)).thenThrow(new GoLinkException("error.code", "arg1"));
 		when(messageSourceAccessor.getMessage(eq("log.fetch.error"), any(Object[].class))).thenReturn("parsed message");
 		when(messageSourceAccessor.getMessage(eq("error.code"), any(Object[].class))).thenReturn("parsed message 2");
-		Response<List<ActionLog>> logResponse = logController.fetchAllLogs();
+		Response<List<ActionLog>> logResponse = logController.fetchAllLogs(null);
 		assertNull(logResponse.getResults());
 		assertFalse(logResponse.getSuccessful());
 		assertEquals(2, logResponse.getMessageList().size());
 		assertEquals("parsed message", logResponse.getMessageList().get(0));
 		assertEquals("parsed message 2", logResponse.getMessageList().get(1));
-		verify(logBAC).fetchAllLogs();
+		verify(logBAC).fetchAllLogs(null);
 		verify(messageSourceAccessor).getMessage(eq("log.fetch.error"), any(Object[].class));
 		ArgumentCaptor<Object[]> argCaptor = ArgumentCaptor.forClass(Object[].class);
 		verify(messageSourceAccessor).getMessage(eq("error.code"), argCaptor.capture());

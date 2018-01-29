@@ -16,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import com.go.bar.redis.RedisActionLogBAR;
 import com.go.model.ActionTypeEnum;
+import com.go.model.SortDirection;
 import com.go.model.ActionLog;
 
 public class RedisActionLogBARTest {
@@ -41,12 +42,38 @@ public class RedisActionLogBARTest {
 	}
 
 	@Test
-	public void testGetLogs() {
-		List<ActionLog> mockActionLogs = Arrays.asList(new ActionLog("test@test.com", "link1", ActionTypeEnum.CREATE));
+	public void testGetLogs_WithNoSort() {
+		List<ActionLog> mockActionLogs = Arrays.asList(new ActionLog("test@test.com", "link1", ActionTypeEnum.CREATE),
+				new ActionLog("test@test.com", "link2", ActionTypeEnum.DELETE));
 		Mockito.when(listOps.range("actionLog", 0, -1)).thenReturn(mockActionLogs);
-		List<ActionLog> actualActionLogs = bar.getAllLogs();
+		List<ActionLog> actualActionLogs = bar.getAllLogs(null);
 		Assert.assertEquals(mockActionLogs, actualActionLogs);
-		Assert.assertEquals(1, actualActionLogs.size());
+		Assert.assertEquals(2, actualActionLogs.size());
+		Assert.assertEquals("link1", actualActionLogs.get(0).getLinkName());
+		Mockito.verify(listOps).range("actionLog", 0, -1);
+	}
+
+	@Test
+	public void testGetLogs_WithAscSort() {
+		List<ActionLog> mockActionLogs = Arrays.asList(new ActionLog("test@test.com", "link1", ActionTypeEnum.CREATE),
+				new ActionLog("test@test.com", "link2", ActionTypeEnum.DELETE));
+		Mockito.when(listOps.range("actionLog", 0, -1)).thenReturn(mockActionLogs);
+		List<ActionLog> actualActionLogs = bar.getAllLogs(SortDirection.ASC);
+		Assert.assertEquals(mockActionLogs, actualActionLogs);
+		Assert.assertEquals(2, actualActionLogs.size());
+		Assert.assertEquals("link1", actualActionLogs.get(0).getLinkName());
+		Mockito.verify(listOps).range("actionLog", 0, -1);
+	}
+
+	@Test
+	public void testGetLogs_WithDescSort() {
+		List<ActionLog> mockActionLogs = Arrays.asList(new ActionLog("test@test.com", "link1", ActionTypeEnum.CREATE),
+				new ActionLog("test@test.com", "link2", ActionTypeEnum.DELETE));
+		Mockito.when(listOps.range("actionLog", 0, -1)).thenReturn(mockActionLogs);
+		List<ActionLog> actualActionLogs = bar.getAllLogs(SortDirection.DESC);
+		Assert.assertEquals(mockActionLogs, actualActionLogs);
+		Assert.assertEquals(2, actualActionLogs.size());
+		Assert.assertEquals("link2", actualActionLogs.get(0).getLinkName());
 		Mockito.verify(listOps).range("actionLog", 0, -1);
 	}
 

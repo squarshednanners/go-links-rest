@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import com.go.bac.impl.ActionLogBACImpl;
 import com.go.bar.IActionLogBAR;
 import com.go.model.ActionTypeEnum;
+import com.go.model.SortDirection;
 import com.go.model.ActionLog;
 
 public class ActionLogBACImplTest {
@@ -66,20 +67,20 @@ public class ActionLogBACImplTest {
 	@Test
 	public void testGetAllLogs() {
 		List<ActionLog> expectedLogs = new ArrayList<>();
-		Mockito.when(actionLogBAR.getAllLogs()).thenReturn(expectedLogs);
-		List<ActionLog> actualLogs = actionLogBAC.fetchAllLogs();
+		Mockito.when(actionLogBAR.getAllLogs(SortDirection.DESC)).thenReturn(expectedLogs);
+		List<ActionLog> actualLogs = actionLogBAC.fetchAllLogs(SortDirection.DESC);
 		assertEquals(expectedLogs, actualLogs);
-		Mockito.verify(actionLogBAR).getAllLogs();
+		Mockito.verify(actionLogBAR).getAllLogs(SortDirection.DESC);
 	}
 
 	@Test
 	public void testGetUserLogs() {
-		Mockito.when(actionLogBAR.getAllLogs()).thenReturn(createLogs());
+		Mockito.when(actionLogBAR.getAllLogs(null)).thenReturn(createLogs());
 		List<ActionLog> logs = actionLogBAC.fetchLogsForUser("test@test.com");
 		assertEquals(2, logs.size());
 		assertEquals("test@test.com", logs.get(0).getUsername());
 		assertEquals("test@test.com", logs.get(1).getUsername());
-		Mockito.verify(actionLogBAR).getAllLogs();
+		Mockito.verify(actionLogBAR).getAllLogs(null);
 	}
 
 	private List<ActionLog> createLogs() {
