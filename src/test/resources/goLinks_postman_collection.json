@@ -1,0 +1,632 @@
+{
+	"info": {
+		"name": "Go Links",
+		"_postman_id": "b46c76ef-ea6b-da0a-6efb-c25b3abd1fb8",
+		"description": "For GO Links!",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authorization",
+			"description": "",
+			"item": [
+				{
+					"name": "Login/Get Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "85ab7d54-ab4b-4ce2-aa23-3eb0c8546534",
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.access_token);"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "secret",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "trusted-app",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/oauth/token?grant_type=password&username=admin@qat.com&password=test",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"oauth",
+								"token"
+							],
+							"query": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"equals": true
+								},
+								{
+									"key": "username",
+									"value": "admin@qat.com",
+									"equals": true
+								},
+								{
+									"key": "password",
+									"value": "test",
+									"equals": true
+								}
+							]
+						},
+						"description": "Login/Get Token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Token/User Info",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "secret",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "trusted-app",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/oauth/check_token?token={{token}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"oauth",
+								"check_token"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Management",
+			"description": "",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/user/all",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"all"
+							]
+						},
+						"description": "Fetch a list of all users"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/user/user%40qat%2Ecom/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"user%40qat%2Ecom",
+								""
+							]
+						},
+						"description": "Fetch a single user by username"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\t{\n\t\t\"username\": \"test@qat.com\",\n\t\t\"password\": \"test\"\n\t}"
+						},
+						"url": {
+							"raw": "{{url}}/api/user/create",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"create"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/user/delete?username=test%40qat%2Ecom",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "test%40qat%2Ecom",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Activate user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/user/activate?active=true&username=test%40qat%2Ecom",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"activate"
+							],
+							"query": [
+								{
+									"key": "active",
+									"value": "true",
+									"equals": true
+								},
+								{
+									"key": "username",
+									"value": "test%40qat%2Ecom",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add User Role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/user/addRole?role=ADMIN&username=test%40qat%2Ecom",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"addRole"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "ADMIN",
+									"equals": true
+								},
+								{
+									"key": "username",
+									"value": "test%40qat%2Ecom",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/user/changePassword?password=test",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"changePassword"
+							],
+							"query": [
+								{
+									"key": "password",
+									"value": "test",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Logs",
+			"description": "",
+			"item": [
+				{
+					"name": "Get All Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/log/action/all",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"log",
+								"action",
+								"all"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Logs for User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/log/action/user/user%40qat%2Ecom/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"log",
+								"action",
+								"user",
+								"user%40qat%2Ecom",
+								""
+							]
+						},
+						"description": "Retrieve all logs for actions performed by a given username"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Links",
+			"description": "",
+			"item": [
+				{
+					"name": "Get All Links",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/go/all",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"go",
+								"all"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Search Links",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "https://w20.bthost.com/qat/EAPSA.ASP"
+						},
+						"url": {
+							"raw": "{{url}}/api/go/search",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"go",
+								"search"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create Link",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\t{\n\t\t\"name\": \"test\",\n\t\t\"url\": \"https://w20.bthost.com/qat/EAPSA.ASP\"\n\t}"
+						},
+						"url": {
+							"raw": "{{url}}/api/go/create",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"go",
+								"create"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Link",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/go/delete?name=test",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"go",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "test",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Summary",
+			"description": "Usage Summary retrieval.  Get usage summary by hour, day, or total summary of used links",
+			"item": [
+				{
+					"name": "Total Usage Summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/summary/usage/total",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"summary",
+								"usage",
+								"total"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Hourly Usage Summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/summary/usage/hour",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"summary",
+								"usage",
+								"hour"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Daily Usage Summary",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{url}}/api/summary/usage/day",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"summary",
+								"usage",
+								"day"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e111cc13-1057-4046-be1b-be52eaab7ea6",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "fe57da73-ab49-4139-a25d-f06c6ac349ac",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "c3faba7f-f63e-431b-bd7d-ed6a73fc5276",
+			"key": "url",
+			"value": "http://localhost:8080",
+			"type": "text"
+		}
+	]
+}
