@@ -1,4 +1,4 @@
-package com.go.url;
+package com.go.util;
 
 import org.springframework.util.StringUtils;
 
@@ -6,7 +6,7 @@ import com.go.exception.GoLinkException;
 import com.go.model.GoLink;
 import com.go.model.ParamTypeEnum;
 
-public final class UrlBuilder {
+public final class UrlBuilderUtil {
 
 	public static String buildUrl(GoLink link, String param) {
 		if (link.getParameter() != null) {

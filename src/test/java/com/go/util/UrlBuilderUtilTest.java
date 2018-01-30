@@ -1,4 +1,4 @@
-package com.go.url;
+package com.go.util;
 
 import static org.junit.Assert.*;
 
@@ -8,30 +8,30 @@ import com.go.exception.GoLinkException;
 import com.go.model.GoLink;
 import com.go.model.GoLinkParameter;
 import com.go.model.ParamTypeEnum;
-import com.go.url.UrlBuilder;
+import com.go.util.UrlBuilderUtil;
 
-public class UrlBuilderTest {
+public class UrlBuilderUtilTest {
 
 	@Test
 	public void testBuildUrlWithNoParam() {
-		assertEquals("http://www.test.com", UrlBuilder.buildUrl(createLink("http://www.test.com"), null));
+		assertEquals("http://www.test.com", UrlBuilderUtil.buildUrl(createLink("http://www.test.com"), null));
 	}
 
 	@Test
 	public void testBuildUrlWithPathParam() {
-		assertEquals("http://www.test.com/testParam", UrlBuilder
+		assertEquals("http://www.test.com/testParam", UrlBuilderUtil
 				.buildUrl(createLink("http://www.test.com", createParam(null, ParamTypeEnum.PATH)), "testParam"));
 	}
 
 	@Test
 	public void testBuildUrlWithNamedParam() {
-		assertEquals("http://www.test.com?param1Name=testParam", UrlBuilder.buildUrl(
+		assertEquals("http://www.test.com?param1Name=testParam", UrlBuilderUtil.buildUrl(
 				createLink("http://www.test.com", createParam("param1Name", ParamTypeEnum.NAMED)), "testParam"));
 	}
 
 	@Test
 	public void testBuildUrlWithProvidedParam() {
-		assertEquals("http://www.test.com?param1Name=testParam", UrlBuilder.buildUrl(
+		assertEquals("http://www.test.com?param1Name=testParam", UrlBuilderUtil.buildUrl(
 				createLink("http://www.test.com?param1Name={param1}", createParam("param1", ParamTypeEnum.PROVIDED)),
 				"testParam"));
 	}
@@ -39,7 +39,7 @@ public class UrlBuilderTest {
 	@Test
 	public void testBuildUrlForProvidedParamWithNoParam() {
 		try {
-			UrlBuilder.buildUrl(createLink("http://www.test.com?param1Name={param1}",
+			UrlBuilderUtil.buildUrl(createLink("http://www.test.com?param1Name={param1}",
 					createParam("param1", ParamTypeEnum.PROVIDED)), "");
 			fail();
 		} catch (GoLinkException ge) {
@@ -51,7 +51,7 @@ public class UrlBuilderTest {
 
 	@Test
 	public void testBuildUrlWithPathButNoPathConfig() {
-		assertEquals("http://www.test.com", UrlBuilder.buildUrl(createLink("http://www.test.com"), "test"));
+		assertEquals("http://www.test.com", UrlBuilderUtil.buildUrl(createLink("http://www.test.com"), "test"));
 	}
 
 	private GoLink createLink(String url) {

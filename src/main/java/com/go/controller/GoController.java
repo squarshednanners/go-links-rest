@@ -23,7 +23,7 @@ import com.go.exception.GoLinkException;
 import com.go.model.GoLink;
 import com.go.model.Message;
 import com.go.model.Response;
-import com.go.url.UrlBuilder;
+import com.go.util.UrlBuilderUtil;
 
 @RestController
 @RequestMapping("/api/go")
@@ -128,7 +128,7 @@ public class GoController extends BaseController {
 	}
 
 	private void redirect(GoLink link, String param, HttpServletResponse httpServletResponse) {
-		redirect(UrlBuilder.buildUrl(link, param), httpServletResponse);
+		redirect(UrlBuilderUtil.buildUrl(link, param), httpServletResponse);
 	}
 
 	private void redirect(String url, HttpServletResponse httpServletResponse) {
