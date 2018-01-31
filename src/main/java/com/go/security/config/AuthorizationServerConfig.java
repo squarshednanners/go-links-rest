@@ -1,17 +1,11 @@
 package com.go.security.config;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -23,94 +17,89 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
-import com.go.security.key.SecretKeyProvider;
 import com.go.security.service.GoUserDetailsService;
 
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Value("${security.oauth2.resource.id}")
-    private String resourceId;
+	@Value("${security.oauth2.resource.id}")
+	private String resourceId;
 
-    @Value("${access_token.validity_period}")
-    private int accessTokenValiditySeconds;
+	@Value("${access_token.validity_period}")
+	private int accessTokenValiditySeconds;
 
-    @Value("${refresh_token.validity_period}")
-    private int refreshTokenValiditySeconds;
-    
-    @Value("${client.id}")
-    private String clientId;
-    
-    @Value("${client.secret}")
-    private String clientSecret;
+	@Value("${refresh_token.validity_period}")
+	private int refreshTokenValiditySeconds;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+	@Value("${client.id}")
+	private String clientId;
 
-    @Bean
-    public UserDetailsService userDetailsService(){
-        return new GoUserDetailsService();
-    }
+	@Value("${client.secret}")
+	private String clientSecret;
 
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints
-                .authenticationManager(this.authenticationManager)
-                .tokenServices(tokenServices())
-                .tokenStore(tokenStore())
-                .accessTokenConverter(accessTokenConverter());        
-    }
+	@Value("${security.key.resource}")
+	private String keyResource;
 
-    @Override
-    public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-        oauthServer
-                .tokenKeyAccess("hasAuthority('ROLE_TRUSTED_CLIENT')")
-                .checkTokenAccess("hasAuthority('ROLE_TRUSTED_CLIENT')");
-    }
+	@Value("${security.key.pair.name}")
+	private String keyName;
 
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient(clientId)
-                .secret(clientSecret)
-                    .authorizedGrantTypes("client_credentials", "password", "refresh_token")
-                    .authorities("ROLE_TRUSTED_CLIENT")
-                    .scopes("read", "write")
-                    .resourceIds(resourceId)
-                    .accessTokenValiditySeconds(accessTokenValiditySeconds)
-                    .refreshTokenValiditySeconds(refreshTokenValiditySeconds);
-    }
+	@Value("${security.key.pair.password}")
+	private String keyPass;
 
-    @Bean
-    public TokenStore tokenStore() {
-        return new JwtTokenStore(accessTokenConverter());
-    }
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private SecretKeyProvider keyProvider;
+	@Bean
+	public UserDetailsService userDetailsService() {
+		return new GoUserDetailsService();
+	}
 
-    @Bean
-    public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        try {
-            converter.setSigningKey(keyProvider.getKey());
-        } catch (URISyntaxException | KeyStoreException | NoSuchAlgorithmException | IOException | UnrecoverableKeyException | CertificateException e) {
-            e.printStackTrace();
-        }
+	@Override
+	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+		endpoints.authenticationManager(this.authenticationManager).tokenServices(tokenServices())
+				.tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter());
+	}
 
-        return converter;
-    }
+	@Override
+	public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+		oauthServer.tokenKeyAccess("hasAuthority('ROLE_TRUSTED_CLIENT')")
+				.checkTokenAccess("hasAuthority('ROLE_TRUSTED_CLIENT')");
+	}
 
-    @Bean
-    @Primary
-    public DefaultTokenServices tokenServices() {
-        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-        defaultTokenServices.setTokenStore(tokenStore());
-        defaultTokenServices.setSupportRefreshToken(true);
-        defaultTokenServices.setTokenEnhancer(accessTokenConverter());
-        return defaultTokenServices;
-    }
+	@Override
+	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+		clients.inMemory().withClient(clientId).secret(clientSecret)
+				.authorizedGrantTypes("client_credentials", "password", "refresh_token")
+				.authorities("ROLE_TRUSTED_CLIENT").scopes("read", "write").resourceIds(resourceId)
+				.accessTokenValiditySeconds(accessTokenValiditySeconds)
+				.refreshTokenValiditySeconds(refreshTokenValiditySeconds);
+	}
+
+	@Bean
+	public TokenStore tokenStore() {
+		return new JwtTokenStore(accessTokenConverter());
+	}
+
+	@Bean
+	public JwtAccessTokenConverter accessTokenConverter() {
+		JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+		KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource(keyResource),
+				keyPass.toCharArray());
+		converter.setKeyPair(keyStoreKeyFactory.getKeyPair(keyName));
+		return converter;
+	}
+
+	@Bean
+	@Primary
+	public DefaultTokenServices tokenServices() {
+		DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+		defaultTokenServices.setTokenStore(tokenStore());
+		defaultTokenServices.setSupportRefreshToken(true);
+		defaultTokenServices.setTokenEnhancer(accessTokenConverter());
+		return defaultTokenServices;
+	}
 
 }
