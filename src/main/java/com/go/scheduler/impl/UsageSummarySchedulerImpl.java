@@ -18,7 +18,7 @@ public class UsageSummarySchedulerImpl implements IUsageSummaryScheduler {
 	@Autowired
 	private IUsageSummaryBAC usageSummaryBAC;
 
-	@Value("${retention.houurly.usage.summary.days.to.keep}")
+	@Value("${retention.hourly.usage.summary.days.to.keep}")
 	private Integer hourlyUsageSummaryDaysToKeep;
 
 	@Value("${retention.daily.usage.summary.days.to.keep}")
