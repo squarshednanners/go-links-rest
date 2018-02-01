@@ -18,16 +18,17 @@ public class UsageSummarySchedulerImpl implements IUsageSummaryScheduler {
 	@Autowired
 	private IUsageSummaryBAC usageSummaryBAC;
 
-	@Value("${retention.usage.summary.days.to.keep}")
-	private Integer usageSummaryDaysToKeep;
+	@Value("${retention.houurly.usage.summary.days.to.keep}")
+	private Integer hourlyUsageSummaryDaysToKeep;
+
+	@Value("${retention.daily.usage.summary.days.to.keep}")
+	private Integer dailyUsageSummaryDaysToKeep;
 
 	@Override
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void deleteUsageSummary() {
-		LOGGER.info("Starting Scheduled Delete of Usage Summary. Deleting summaries older than "
-				+ usageSummaryDaysToKeep + " days");
-		usageSummaryBAC.deleteUsageSummary(usageSummaryDaysToKeep);
-		LOGGER.info("Completed Scheduled Delete of Usage Summary");
+		deleteHourlyUsageSummary();
+		deleteDailyUsageSummary();
 	}
 
 	@Override
@@ -44,6 +45,20 @@ public class UsageSummarySchedulerImpl implements IUsageSummaryScheduler {
 		LOGGER.info("Starting Daily Usage Summary Calculation");
 		usageSummaryBAC.calculateDailySummary();
 		LOGGER.info("Completed Daily Usage Summary Calculation");
+	}
+
+	private void deleteHourlyUsageSummary() {
+		LOGGER.info("Starting Scheduled Delete of Hourly Usage Summary. Deleting summaries older than "
+				+ hourlyUsageSummaryDaysToKeep + " days");
+		usageSummaryBAC.deleteHourlyUsageSummary(hourlyUsageSummaryDaysToKeep);
+		LOGGER.info("Completed Scheduled Delete of Hourly Usage Summary");
+	}
+
+	private void deleteDailyUsageSummary() {
+		LOGGER.info("Starting Scheduled Delete of Daily Usage Summary. Deleting summaries older than "
+				+ dailyUsageSummaryDaysToKeep + " days");
+		usageSummaryBAC.deleteDailyUsageSummary(dailyUsageSummaryDaysToKeep);
+		LOGGER.info("Completed Scheduled Delete of Daily Usage Summary");
 	}
 
 }

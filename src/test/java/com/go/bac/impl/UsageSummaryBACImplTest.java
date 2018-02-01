@@ -73,43 +73,64 @@ public class UsageSummaryBACImplTest {
 	}
 
 	@Test
-	public void testDeleteUsageSummary() {
+	public void testDeleteHourlyUsageSummary() {
 		List<UsageSummary> summaryList = Arrays.asList(createUsageSummary(1l),
 				createUsageSummary(TimeUtil.topOfDay().minusDays(1).plusNanos(1).toInstant().toEpochMilli()));
-		Mockito.when(usageSummaryBAR.fetchPagedDailySummary(1, 2)).thenReturn(summaryList);
 		Mockito.when(usageSummaryBAR.fetchPagedHourlySummary(1, 25)).thenReturn(summaryList);
-		usageSummaryBAC.deleteUsageSummary(1);
-		Mockito.verify(usageSummaryBAR).fetchPagedDailySummary(1, 2);
+		usageSummaryBAC.deleteHourlyUsageSummary(1);
 		Mockito.verify(usageSummaryBAR).fetchPagedHourlySummary(1, 25);
-		Mockito.verify(usageSummaryBAR).deleteDailySummary(summaryList.get(0));
 		Mockito.verify(usageSummaryBAR).deleteHourlySummary(summaryList.get(0));
 	}
 
 	@Test
-	public void testDeleteUsageSummary_DeleteMoreThanOnePage() {
+	public void testDeleteHourlyUsageSummary_DeleteMoreThanOnePage() {
 		List<UsageSummary> summaryList = Arrays.asList(createUsageSummary(1l), createUsageSummary(2l));
-		Mockito.when(usageSummaryBAR.fetchPagedDailySummary(1, 2)).thenReturn(summaryList).thenReturn(Arrays.asList());
 		Mockito.when(usageSummaryBAR.fetchPagedHourlySummary(1, 25)).thenReturn(summaryList)
 				.thenReturn(Arrays.asList());
-		usageSummaryBAC.deleteUsageSummary(1);
-		Mockito.verify(usageSummaryBAR).fetchPagedDailySummary(1, 2);
-		Mockito.verify(usageSummaryBAR).fetchPagedDailySummary(2, 2);
+		usageSummaryBAC.deleteHourlyUsageSummary(1);
 		Mockito.verify(usageSummaryBAR).fetchPagedHourlySummary(1, 25);
 		Mockito.verify(usageSummaryBAR).fetchPagedHourlySummary(2, 25);
-		Mockito.verify(usageSummaryBAR).deleteDailySummary(summaryList.get(0));
-		Mockito.verify(usageSummaryBAR).deleteDailySummary(summaryList.get(1));
 		Mockito.verify(usageSummaryBAR).deleteHourlySummary(summaryList.get(0));
 		Mockito.verify(usageSummaryBAR).deleteHourlySummary(summaryList.get(1));
 	}
 
 	@Test
-	public void testDeleteUsageSummary_NothingToDelete() {
+	public void testDeleteHourlyUsageSummary_NothingToDelete() {
+		List<UsageSummary> summaryList = Arrays.asList();
+		Mockito.when(usageSummaryBAR.fetchPagedHourlySummary(1, 25)).thenReturn(summaryList);
+		usageSummaryBAC.deleteHourlyUsageSummary(1);
+		Mockito.verify(usageSummaryBAR).fetchPagedHourlySummary(1, 25);
+	}
+
+	@Test
+	public void testDeleteDailyUsageSummary() {
+		List<UsageSummary> summaryList = Arrays.asList(createUsageSummary(1l),
+				createUsageSummary(TimeUtil.topOfDay().minusDays(1).plusNanos(1).toInstant().toEpochMilli()));
+		Mockito.when(usageSummaryBAR.fetchPagedDailySummary(1, 2)).thenReturn(summaryList);
+		usageSummaryBAC.deleteDailyUsageSummary(1);
+		Mockito.verify(usageSummaryBAR).fetchPagedDailySummary(1, 2);
+		Mockito.verify(usageSummaryBAR).deleteDailySummary(summaryList.get(0));
+	}
+
+	@Test
+	public void testDeleteDailyUsageSummary_DeleteMoreThanOnePage() {
+		List<UsageSummary> summaryList = Arrays.asList(createUsageSummary(1l), createUsageSummary(2l));
+		Mockito.when(usageSummaryBAR.fetchPagedDailySummary(1, 2)).thenReturn(summaryList).thenReturn(Arrays.asList());
+		Mockito.when(usageSummaryBAR.fetchPagedHourlySummary(1, 25)).thenReturn(summaryList)
+				.thenReturn(Arrays.asList());
+		usageSummaryBAC.deleteDailyUsageSummary(1);
+		Mockito.verify(usageSummaryBAR).fetchPagedDailySummary(1, 2);
+		Mockito.verify(usageSummaryBAR).fetchPagedDailySummary(2, 2);
+		Mockito.verify(usageSummaryBAR).deleteDailySummary(summaryList.get(0));
+		Mockito.verify(usageSummaryBAR).deleteDailySummary(summaryList.get(1));
+	}
+
+	@Test
+	public void testDeleteDailyUsageSummary_NothingToDelete() {
 		List<UsageSummary> summaryList = Arrays.asList();
 		Mockito.when(usageSummaryBAR.fetchPagedDailySummary(1, 2)).thenReturn(summaryList);
-		Mockito.when(usageSummaryBAR.fetchPagedHourlySummary(1, 25)).thenReturn(summaryList);
-		usageSummaryBAC.deleteUsageSummary(1);
+		usageSummaryBAC.deleteDailyUsageSummary(1);
 		Mockito.verify(usageSummaryBAR).fetchPagedDailySummary(1, 2);
-		Mockito.verify(usageSummaryBAR).fetchPagedHourlySummary(1, 25);
 	}
 
 	@Test

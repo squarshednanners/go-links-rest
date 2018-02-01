@@ -33,9 +33,11 @@ public class UsageSummarySchedulerImplTest {
 
 	@Test
 	public void testScheduledUsageSummaryDelete() {
-		ReflectionTestUtils.setField(usageSummaryScheduler, "usageSummaryDaysToKeep", 30);
+		ReflectionTestUtils.setField(usageSummaryScheduler, "hourlyUsageSummaryDaysToKeep", 7);
+		ReflectionTestUtils.setField(usageSummaryScheduler, "dailyUsageSummaryDaysToKeep", 30);
 		usageSummaryScheduler.deleteUsageSummary();
-		Mockito.verify(usageSummaryBAC).deleteUsageSummary(30);
+		Mockito.verify(usageSummaryBAC).deleteHourlyUsageSummary(7);
+		Mockito.verify(usageSummaryBAC).deleteDailyUsageSummary(30);
 	}
 
 	@Test

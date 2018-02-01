@@ -44,13 +44,6 @@ public class UsageSummaryBACImpl implements IUsageSummaryBAC {
 	}
 
 	@Override
-	public void deleteUsageSummary(Integer usageSummaryDaysToKeep) {
-		Long deleteThreshold = TimeUtil.topOfDay().minusDays(usageSummaryDaysToKeep).toInstant().toEpochMilli();
-		deleteHourlyUsageSummary(deleteThreshold);
-		deleteDailyUsageSummary(deleteThreshold);
-	}
-
-	@Override
 	public void calculateHourlySummary() {
 		Long hourStart = hourSummaryBegin();
 		Long hourEnd = hourSummaryEnd();
@@ -73,7 +66,9 @@ public class UsageSummaryBACImpl implements IUsageSummaryBAC {
 		aggregateTotalSummary();
 	}
 
-	private void deleteHourlyUsageSummary(Long deleteThreshold) {
+	@Override
+	public void deleteHourlyUsageSummary(Integer usageSummaryDaysToKeep) {
+		Long deleteThreshold = TimeUtil.topOfDay().minusDays(usageSummaryDaysToKeep).toInstant().toEpochMilli();
 		boolean hasMoreLogs = true;
 		int pageNum = 1;
 		int summariesDeleted = 0;
@@ -93,10 +88,12 @@ public class UsageSummaryBACImpl implements IUsageSummaryBAC {
 				}
 			}
 		}
-		LOGGER.info("Deleted " + summariesDeleted + " Usage Summaries");
+		LOGGER.info("Deleted " + summariesDeleted + " Hourly Usage Summaries");
 	}
 
-	private void deleteDailyUsageSummary(Long deleteThreshold) {
+	@Override
+	public void deleteDailyUsageSummary(Integer usageSummaryDaysToKeep) {
+		Long deleteThreshold = TimeUtil.topOfDay().minusDays(usageSummaryDaysToKeep).toInstant().toEpochMilli();
 		boolean hasMoreLogs = true;
 		int pageNum = 1;
 		int summariesDeleted = 0;
@@ -116,7 +113,7 @@ public class UsageSummaryBACImpl implements IUsageSummaryBAC {
 				}
 			}
 		}
-		LOGGER.info("Deleted " + summariesDeleted + " Usage Summaries");
+		LOGGER.info("Deleted " + summariesDeleted + " Daily Usage Summaries");
 	}
 
 	private UsageSummary createSummary(Long startTime, List<UsageLog> usageLogs) {

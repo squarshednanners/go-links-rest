@@ -6,15 +6,17 @@ import com.go.model.UsageSummary;
 
 public interface IUsageSummaryBAC {
 
-	void deleteUsageSummary(Integer usageSummaryDaysToKeep);
-
-	List<UsageSummary> fetchAllHourlySummaries();
-
 	void calculateHourlySummary();
-
-	List<UsageSummary> fetchAllDailySummaries();
 
 	void calculateDailySummary();
 
+	List<UsageSummary> fetchAllHourlySummaries();
+
+	List<UsageSummary> fetchAllDailySummaries();
+
 	UsageSummary fetchTotalSummary();
+
+	void deleteHourlyUsageSummary(Integer usageSummaryDaysToKeep);
+
+	void deleteDailyUsageSummary(Integer usageSummaryDaysToKeep);
 }
