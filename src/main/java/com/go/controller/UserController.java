@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,9 @@ public class UserController extends BaseController {
 
 	@Autowired
 	private IUserBAC userBAC;
+
+	@Value("${user.activate.upon.creation}")
+	private boolean activateUserOnCreation;
 
 	@GetMapping("/all")
 	@PreAuthorize("hasRole('ADMIN')")
@@ -58,8 +62,12 @@ public class UserController extends BaseController {
 	public Response<User> createUser(@RequestBody User user) {
 		Response<User> response = new Response<User>();
 		try {
-			response.setResults(userBAC.createUser(user));
+			User createdUser = userBAC.createUser(user);
+			response.setResults(createdUser);
 			formatSuccessResponse(response, new Message("user.created"));
+			if (activateUserOnCreation) {
+				activateUser(response, createdUser.getUsername(), true);
+			}
 		} catch (Exception e) {
 			formatErrorResponse(response, e, new Message("user.create.error"));
 		}
@@ -71,13 +79,17 @@ public class UserController extends BaseController {
 	public Response<User> activateUser(@RequestParam("username") String username,
 			@RequestParam("active") boolean active) {
 		Response<User> response = new Response<User>();
+		activateUser(response, username, active);
+		return response;
+	}
+
+	private void activateUser(Response<User> response, String username, boolean active) {
 		try {
 			response.setResults(userBAC.updateUserActivation(username, active));
 			formatSuccessResponse(response, new Message("user.activated"));
 		} catch (Exception e) {
 			formatErrorResponse(response, e, new Message("user.activation.error"));
 		}
-		return response;
 	}
 
 	@GetMapping("/addRole")

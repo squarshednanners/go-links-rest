@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.go.bac.IUserBAC;
 import com.go.exception.GoLinkException;
@@ -189,6 +190,81 @@ public class UserControllerTest {
 		assertEquals("parsed message 2", response.getMessageList().get(1));
 		verify(userBAC).createUser(createUser);
 		verify(messageSourceAccessor).getMessage(eq("user.create.error"), any(Object[].class));
+		ArgumentCaptor<Object[]> argCaptor = ArgumentCaptor.forClass(Object[].class);
+		verify(messageSourceAccessor).getMessage(eq("error.code"), argCaptor.capture());
+		assertEquals(1, argCaptor.getValue().length);
+		assertEquals("arg1", argCaptor.getValue()[0]);
+	}
+
+	@Test
+	public void testCreateAndActivateUser() {
+		ReflectionTestUtils.setField(userController, "activateUserOnCreation", true);
+		User createUser = createUser();
+		User activatedUser = createUser();
+		when(userBAC.createUser(createUser)).thenReturn(createUser);
+		when(userBAC.updateUserActivation("test@test.com", true)).thenReturn(activatedUser);
+		when(messageSourceAccessor.getMessage(eq("user.created"), any(Object[].class)))
+				.thenReturn("parsed created message");
+		when(messageSourceAccessor.getMessage(eq("user.activated"), any(Object[].class)))
+				.thenReturn("parsed activated message");
+		Response<User> response = userController.createUser(createUser);
+		assertEquals(activatedUser, response.getResults());
+		assertTrue(response.getSuccessful());
+		assertEquals(2, response.getMessageList().size());
+		assertEquals("parsed created message", response.getMessageList().get(0));
+		assertEquals("parsed activated message", response.getMessageList().get(1));
+		verify(userBAC).createUser(createUser);
+		verify(userBAC).updateUserActivation("test@test.com", true);
+		verify(messageSourceAccessor).getMessage(eq("user.created"), any(Object[].class));
+		verify(messageSourceAccessor).getMessage(eq("user.activated"), any(Object[].class));
+	}
+
+	@Test
+	public void testCreateAndActivateUserOnActivationException() {
+		ReflectionTestUtils.setField(userController, "activateUserOnCreation", true);
+		User createUser = createUser();
+		when(userBAC.createUser(createUser)).thenReturn(createUser);
+		when(userBAC.updateUserActivation("test@test.com", true))
+				.thenThrow(new RuntimeException("Bad things happened"));
+		when(messageSourceAccessor.getMessage(eq("user.created"), any(Object[].class)))
+				.thenReturn("parsed created message");
+		when(messageSourceAccessor.getMessage(eq("user.activation.error"), any(Object[].class)))
+				.thenReturn("parsed activation error message");
+		Response<User> response = userController.createUser(createUser);
+		assertEquals(createUser, response.getResults());
+		assertFalse(response.getSuccessful());
+		assertEquals(3, response.getMessageList().size());
+		assertEquals("parsed created message", response.getMessageList().get(0));
+		assertEquals("parsed activation error message", response.getMessageList().get(1));
+		assertEquals("Bad things happened", response.getMessageList().get(2));
+		verify(userBAC).createUser(createUser);
+		verify(userBAC).updateUserActivation("test@test.com", true);
+		verify(messageSourceAccessor).getMessage(eq("user.created"), any(Object[].class));
+		verify(messageSourceAccessor).getMessage(eq("user.activation.error"), any(Object[].class));
+	}
+	
+	@Test
+	public void testCreateAndActivateUserOnActivationGoLinkException() {
+		ReflectionTestUtils.setField(userController, "activateUserOnCreation", true);
+		User createUser = createUser();
+		when(userBAC.createUser(createUser)).thenReturn(createUser);
+		when(userBAC.updateUserActivation("test@test.com", true)).thenThrow(new GoLinkException("error.code", "arg1"));
+		when(messageSourceAccessor.getMessage(eq("user.created"), any(Object[].class)))
+				.thenReturn("parsed created message");
+		when(messageSourceAccessor.getMessage(eq("user.activation.error"), any(Object[].class)))
+				.thenReturn("parsed activation error message");
+		when(messageSourceAccessor.getMessage(eq("error.code"), any(Object[].class))).thenReturn("parsed message 2");
+		Response<User> response = userController.createUser(createUser);
+		assertEquals(createUser, response.getResults());
+		assertFalse(response.getSuccessful());
+		assertEquals(3, response.getMessageList().size());
+		assertEquals("parsed created message", response.getMessageList().get(0));
+		assertEquals("parsed activation error message", response.getMessageList().get(1));
+		assertEquals("parsed message 2", response.getMessageList().get(2));
+		verify(userBAC).createUser(createUser);
+		verify(userBAC).updateUserActivation("test@test.com", true);
+		verify(messageSourceAccessor).getMessage(eq("user.created"), any(Object[].class));
+		verify(messageSourceAccessor).getMessage(eq("user.activation.error"), any(Object[].class));
 		ArgumentCaptor<Object[]> argCaptor = ArgumentCaptor.forClass(Object[].class);
 		verify(messageSourceAccessor).getMessage(eq("error.code"), argCaptor.capture());
 		assertEquals(1, argCaptor.getValue().length);
