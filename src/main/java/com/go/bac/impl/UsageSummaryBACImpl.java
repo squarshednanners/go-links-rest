@@ -20,7 +20,7 @@ import com.go.util.TimeUtil;
 @Component
 public class UsageSummaryBACImpl implements IUsageSummaryBAC {
 
-	final static Logger LOGGER = LoggerFactory.getLogger(UsageLogBACImpl.class);
+	final static Logger LOGGER = LoggerFactory.getLogger(UsageSummaryBACImpl.class);
 
 	@Autowired
 	private IUsageLogBAR usageLogBAR;
